@@ -12,7 +12,7 @@ SC_HAS_PROCESS(BusCtrl);
 BusCtrl::BusCtrl(sc_core::sc_module_name name) :
 		sc_module(name), cpu_instr_socket("cpu_instr_socket"), cpu_data_socket(
 				"cpu_data_socket"), memory_socket("memory_socket"), trace_socket(
-				"trace_socket") {
+				"trace_socket"), uart_socket ("uart_socket") {
 	cpu_instr_socket.register_b_transport(this, &BusCtrl::b_transport);
 	cpu_data_socket.register_b_transport(this, &BusCtrl::b_transport);
 	log = Log::getInstance();
@@ -36,6 +36,12 @@ void BusCtrl::b_transport(tlm::tlm_generic_payload &trans,
 		break;
 	case TRACE_MEMORY_ADDRESS / 4:
 		trace_socket->b_transport(trans, delay);
+		break;
+	case UART_REGISTER_A_MEMORY_ADDRESS_LO / 4:
+	case UART_REGISTER_A_MEMORY_ADDRESS_HI / 4:
+	case UART_REGISTER_B_MEMORY_ADDRESS_LO / 4:
+	case UART_REGISTER_B_MEMORY_ADDRESS_HI / 4:
+		uart_socket->b_transport(trans, delay);
 		break;
 	[[likely]] default:
 		memory_socket->b_transport(trans, delay);

@@ -32,6 +32,11 @@
 #define TIMERCMP_MEMORY_ADDRESS_LO 0x40004008
 #define TIMERCMP_MEMORY_ADDRESS_HI 0x4000400C
 
+#define UART_REGISTER_A_MEMORY_ADDRESS_LO 0x40008000
+#define UART_REGISTER_A_MEMORY_ADDRESS_HI 0x40008004
+#define UART_REGISTER_B_MEMORY_ADDRESS_LO 0x40008008
+#define UART_REGISTER_B_MEMORY_ADDRESS_HI 0x4000800C
+
 /**
  * @brief Simple bus controller
  *
@@ -67,6 +72,11 @@ public:
 	 * @brief TLM initiator socket Trace module
 	 */
 	tlm_utils::simple_initiator_socket<BusCtrl> timer_socket;
+
+		/**
+	 * @brief TLM initiator socket Uart module
+	 */
+	tlm_utils::simple_initiator_socket<BusCtrl> uart_socket;
 
 	/**
 	 * @brief constructor

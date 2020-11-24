@@ -21,6 +21,35 @@
 
 #include "BusCtrl.h"
 
+
+  //! UART registers.
+  //! - rbr: R: Rx buffer,		      
+  //! - thr: R: Tx hold reg,		      
+  //! - ier: R/W: Interrupt Enable Register   
+  //! - iir: R: Interrupt ID Register	      
+  //! - lcr: R/W: Line Control Register	      
+  //! - mcr: W: Modem Control Register	      
+  //! - lsr: R: Line Status Register	      
+  //! - msr: R: Modem Status Register	      
+  //! - scr: R/W: Scratch Register            
+  //! - dl:  R/W: Divisor Latch
+
+  typedef struct {
+    volatile uint8_t   rbr;		// R: Rx buffer,
+    volatile uint8_t   thr;		// W: Tx hold reg,
+    volatile uint8_t   ier;		// R/W: Interrupt Enable Register
+    volatile uint8_t   iir;		// R: Interrupt ID Register
+    volatile uint8_t   lcr;		// R/W: Line Control RegisWASter
+    volatile uint8_t   mcr;		// W: Modem Control Register
+    volatile uint8_t   lsr;		// R: Line Status Register
+    volatile uint8_t   msr;		// R: Modem Status Register
+    volatile uint8_t   scr;		// R/W: Scratch Register            
+    volatile uint8_t    dl;		// R/W: Divisor Latch
+  } uart_regs;
+
+#define UART_REGISTERS ((uart_regs *) UART_REGISTERS_MEMORY_ADDRESS)
+
+
 /**
  * @brief Simple Registers peripheral
  *

@@ -32,7 +32,7 @@ int main(void) {
   
   printf("UART REG A: 0x%08X\n", UART_REGISTER_A_MEMORY_ADDRESS_LO);
     
-  UART1->reg_b = 0xC01DCAFE;
+  UART1->reg_b = 0x000000FF;
   UART1->reg_c = 0xACABACAB;
   UART1->reg_d = 0x12345678;
   

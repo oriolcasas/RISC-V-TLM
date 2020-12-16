@@ -14,7 +14,17 @@ Uart::Uart(sc_core::sc_module_name name) :
 
 	socket.register_b_transport(this, &Uart::b_transport);
 
-	registerSetup();
+	//SC_THREAD(run);
+}
+
+int _write(int file, const char *ptr, int len) {
+  int x;
+
+  for (x = 0; x < len; x++) {
+    TRACE =  *ptr++;
+  }
+
+  return (len);
 }
 
 void Uart::b_transport(tlm::tlm_generic_payload &trans,
@@ -30,33 +40,16 @@ void Uart::b_transport(tlm::tlm_generic_payload &trans,
 	if (cmd == tlm::TLM_WRITE_COMMAND) {
 		memcpy(&aux_value, ptr, len);
 		switch (addr) {
-		case UART_REGISTER_A_MEMORY_ADDRESS_LO:
-			m_registerA.range(31, 0) = aux_value;
-			break;
-		case UART_REGISTER_A_MEMORY_ADDRESS_HI:
-			m_registerA.range(63, 32) = aux_value;
-			break;
-		case UART_REGISTER_B_MEMORY_ADDRESS_LO:
-			m_registerB.range(31, 0) = aux_value;
-			break;
-		case UART_REGISTER_B_MEMORY_ADDRESS_HI:
-			m_registerB.range(63, 32) = aux_value;
+		case UART_REGISTERS_MEMORY_ADDRESS:
+			UART_REGISTERS->thr = aux_value;
+			//txReceived.notify();			// Tell the thread
 			break;
 		}
 
 	} else { // TLM_READ_COMMAND
 		switch (addr) {
-		case UART_REGISTER_A_MEMORY_ADDRESS_LO:
-			aux_value = m_registerA.range(31, 0);
-			break;
-		case UART_REGISTER_A_MEMORY_ADDRESS_HI:
-			aux_value = m_registerA.range(63, 32);
-			break;
-		case UART_REGISTER_B_MEMORY_ADDRESS_LO:
-			aux_value = m_registerB.range(31, 0);
-			break;
-		case UART_REGISTER_B_MEMORY_ADDRESS_HI:
-			aux_value = m_registerB.range(63, 32);
+		case UART_REGISTERS_MEMORY_ADDRESS:
+			aux_value = UART_REGISTERS->thr; //MODIFY REGISTER LATER
 			break;
 		}
 		memcpy(ptr, &aux_value, len);
@@ -65,15 +58,17 @@ void Uart::b_transport(tlm::tlm_generic_payload &trans,
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 }
 
-void Uart::registerSetup(void) {
 
-	//TO DO
-	//Set Registers with specific values in hexadecimal
-	m_registerA |= 0X0000000000000000;
-	m_registerB |= 0x0000000000000000;
+void Uart::run() {
 
+	while (true){
+
+		//If interrupt enabled
+		//UART_REGISTERS->ier == 0x00;
+
+		wait( txReceived );			// Wait for when data is written in the bus
+		
+		//write to terminal
+		printf("Character: 0x%08lX\n", UART_REGISTERS->thr);
+	}
 }
-
-
-
-

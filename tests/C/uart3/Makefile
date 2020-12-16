@@ -1,4 +1,4 @@
-TARGET   = uart2
+TARGET   = uart
 
 TARGET_ARCH=riscv32
 

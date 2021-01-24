@@ -14,7 +14,8 @@ Uart::Uart(sc_core::sc_module_name name) :
 
 	socket.register_b_transport(this, &Uart::b_transport);
 
-	//SC_THREAD(run);
+
+	SC_THREAD(run);
 }
 
 int _write(int file, const char *ptr, int len) {
@@ -36,31 +37,37 @@ void Uart::b_transport(tlm::tlm_generic_payload &trans,
 	unsigned int len = trans.get_data_length();
 
 	uint32_t aux_value = 0;
-
+	std::cout << "START TRANSMISSION" << '\n';
 	if (cmd == tlm::TLM_WRITE_COMMAND) {
 		memcpy(&aux_value, ptr, len);
 		switch (addr) {
 		case UART_REGISTERS_MEMORY_ADDRESS:
-			UART_REGISTERS->thr = aux_value;
-			//txReceived.notify();			// Tell the thread
+		    std::cout << "Data in address: " << std::hex << addr << " to be written: " << aux_value << '\n';
+		    my_regs.thr = aux_value;
+			txReceived.notify();			// Tell the thread
 			break;
 		}
 
 	} else { // TLM_READ_COMMAND
 		switch (addr) {
 		case UART_REGISTERS_MEMORY_ADDRESS:
-			aux_value = UART_REGISTERS->thr; //MODIFY REGISTER LATER
+		  std::cout << "READ" << '\n';
+			aux_value = my_regs.rbr; //MODIFY REGISTER LATER
 			break;
 		}
-		memcpy(ptr, &aux_value, len);
+		//memcpy(ptr, &aux_value, len);
+
+
 	}
 
+	std::cout << "END TRANSMISSION" << '\n';
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 }
 
 
 void Uart::run() {
 
+	int i = 0;
 	while (true){
 
 		//If interrupt enabled
@@ -68,7 +75,9 @@ void Uart::run() {
 
 		wait( txReceived );			// Wait for when data is written in the bus
 		
+		i++;
 		//write to terminal
-		printf("Character: 0x%08lX\n", UART_REGISTERS->thr);
+		//printf("Data written: 0x%08lX\n", my_regs.thr);
+		printf("%d. Data written:%c\n", i, my_regs.thr);
 	}
 }

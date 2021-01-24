@@ -43,7 +43,7 @@
   //! - dl:  R/W: Divisor Latch
 
   typedef struct {
-    // volatile uint32_t   rbr;		// R: Rx buffer,
+    volatile uint32_t   rbr;		// R: Rx buffer,
     volatile uint32_t   thr;		// W: Tx hold reg,
     volatile uint32_t   ier;		// R/W: Interrupt Enable Register
     //volatile uint32_t   iir;		// R: Interrupt ID Register
@@ -96,7 +96,7 @@ public:
 private:
 
 	void run();
-
+	uart_regs my_regs;
 	sc_core::sc_event txReceived; /**< event for when transmit buffer is written*/
 
 };

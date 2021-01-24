@@ -7,10 +7,10 @@
 #define UART_BASE (0x40008000UL)
 
 typedef struct {
-   volatile uint8_t reg_a;
-   volatile uint8_t reg_b;
-   volatile uint8_t reg_c;
-   volatile uint8_t reg_d;
+   volatile uint32_t reg_a;
+   volatile uint32_t reg_b;
+   volatile uint32_t reg_c;
+   volatile uint32_t reg_d;
 } uart_registers_t;
 
 #define UART1 ((uart_registers_t *) UART_BASE)
@@ -32,9 +32,9 @@ int main(void) {
   
   printf("UART REG A: 0x%08X\n", UART_REGISTER_A_MEMORY_ADDRESS_LO);
     
-  UART1->reg_b = 0xC0;
-  UART1->reg_c = 0xAC;
-  UART1->reg_d = 0x12;
+  UART1->reg_b = 0xC01DCAFE;
+  UART1->reg_c = 0xACABACAB;
+  UART1->reg_d = 0x12345678;
   
   printf("Struct: 0x%08lX\n", UART1->reg_a);
   printf("Struct: 0x%08lX\n", UART1->reg_b);
